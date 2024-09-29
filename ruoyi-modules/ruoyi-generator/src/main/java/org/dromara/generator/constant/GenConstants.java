@@ -1,5 +1,8 @@
 package org.dromara.generator.constant;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 /**
  * 代码生成通用常量
  *
@@ -69,25 +72,25 @@ public interface GenConstants {
      * BO对象 不需要添加字段
      */
     String[] COLUMNNAME_NOT_ADD = {"create_dept", "create_by", "create_time", "del_flag", "update_by",
-        "update_time", "version", "tenant_id"};
+        "update_time", "version", "tenant_id","matadata"};
 
     /**
      * BO对象 不需要编辑字段
      */
     String[] COLUMNNAME_NOT_EDIT = {"create_dept", "create_by", "create_time", "del_flag", "update_by",
-        "update_time", "version", "tenant_id"};
+        "update_time", "version", "tenant_id","matadata"};
 
     /**
      * VO对象 不需要返回字段
      */
     String[] COLUMNNAME_NOT_LIST = {"create_dept", "create_by", "create_time", "del_flag", "update_by",
-        "update_time", "version", "tenant_id"};
+        "update_time", "version", "tenant_id","matadata"};
 
     /**
      * BO对象 不需要查询字段
      */
     String[] COLUMNNAME_NOT_QUERY = {"id", "create_dept", "create_by", "create_time", "del_flag", "update_by",
-        "update_time", "remark", "version", "tenant_id"};
+        "update_time", "remark", "version", "tenant_id","matadata"};
 
     /**
      * Entity基类字段
@@ -168,6 +171,17 @@ public interface GenConstants {
      * 时间类型
      */
     String TYPE_DATE = "Date";
+
+
+    /**
+     * java8时间类型
+     */
+    String  TYPE_JAVA8_DATE = "LocalDate";
+
+    /**
+     * java8时间类型
+     */
+    String  TYPE_JAVA8_DATE_TIME = "LocalDateTime";
 
     /**
      * 模糊查询

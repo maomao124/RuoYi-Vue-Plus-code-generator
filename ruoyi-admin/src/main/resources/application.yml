@@ -7,6 +7,9 @@ ruoyi:
   # 版权年份
   copyrightYear: 2024
 
+gen:
+  basePackageName: org.gxwy
+
 captcha:
   enable: true
   # 页面 <参数设置> 可开启关闭 验证码校验

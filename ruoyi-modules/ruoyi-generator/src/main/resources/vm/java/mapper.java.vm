@@ -1,15 +1,18 @@
 package ${packageName}.mapper;
 
-import ${packageName}.domain.${ClassName};
+import org.apache.ibatis.annotations.Mapper;
+import ${packageName}.entity.${ClassName};
 import ${packageName}.domain.vo.${ClassName}Vo;
-import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
+import ${basePackageName}.common.mybatis.core.mapper.BaseMapperPlus;
 
 /**
  * ${functionName}Mapper接口
  *
  * @author ${author}
- * @date ${datetime}
+ * @since ${datetime}
  */
-public interface ${ClassName}Mapper extends BaseMapperPlus<${ClassName}, ${ClassName}Vo> {
+@Mapper
+public interface ${ClassName}Mapper extends BaseMapperPlus<${ClassName}, ${ClassName}Vo>
+{
 
 }

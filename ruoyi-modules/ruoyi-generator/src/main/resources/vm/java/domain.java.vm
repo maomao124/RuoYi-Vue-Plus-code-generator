@@ -1,4 +1,4 @@
-package ${packageName}.domain;
+package ${packageName}.entity;
 
 #foreach ($column in $columns)
 #if($column.javaField=='tenantId')
@@ -6,13 +6,17 @@ package ${packageName}.domain;
 #end
 #end
 #if($IsTenant==1)
-import org.dromara.common.tenant.core.TenantEntity;
+import ${basePackageName}.common.tenant.core.TenantEntity;
 #else
-import org.dromara.common.mybatis.core.domain.BaseEntity;
+import ${basePackageName}.common.mybatis.core.domain.BaseEntity;
 #end
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 #foreach ($import in $importList)
 import ${import};
 #end
@@ -23,7 +27,7 @@ import java.io.Serial;
  * ${functionName}对象 ${tableName}
  *
  * @author ${author}
- * @date ${datetime}
+ * @since ${datetime}
  */
 #if($IsTenant==1)
 #set($Entity="TenantEntity")
@@ -31,9 +35,12 @@ import java.io.Serial;
 #set($Entity="BaseEntity")
 #end
 @Data
+@Schema(name = "${functionName}对象")
 @EqualsAndHashCode(callSuper = true)
 @TableName("${tableName}")
-public class ${ClassName} extends ${Entity} {
+@Accessors(chain = true)
+public class ${ClassName} extends ${Entity}
+    {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -52,6 +59,7 @@ public class ${ClassName} extends ${Entity} {
 #if($column.isPk==1)
     @TableId(value = "$column.columnName")
 #end
+    @Schema(description = "$column.columnComment")
     private $column.javaType $column.javaField;
 
 #end

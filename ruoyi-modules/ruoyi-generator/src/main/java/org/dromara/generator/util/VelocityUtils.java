@@ -3,6 +3,10 @@ package org.dromara.generator.util;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.Dict;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
+import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.generator.constant.GenConstants;
 import org.dromara.common.core.utils.DateUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -13,6 +17,7 @@ import org.dromara.generator.domain.GenTableColumn;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.velocity.VelocityContext;
+import org.dromara.generator.service.BasePackageService;
 
 import java.util.*;
 
@@ -39,6 +44,8 @@ public class VelocityUtils {
      */
     private static final String DEFAULT_PARENT_MENU_ID = "3";
 
+    private String basePackageName= "";
+
     /**
      * 设置模板变量信息
      *
@@ -61,6 +68,7 @@ public class VelocityUtils {
         velocityContext.put("BusinessName", StringUtils.capitalize(genTable.getBusinessName()));
         velocityContext.put("businessName", genTable.getBusinessName());
         velocityContext.put("basePackage", getPackagePrefix(packageName));
+        velocityContext.put("basePackageName", SpringUtils.context().getBean(BasePackageService.class).getBasePackageName());
         velocityContext.put("packageName", packageName);
         velocityContext.put("author", genTable.getFunctionAuthor());
         velocityContext.put("datetime", DateUtils.getDate());
@@ -112,7 +120,12 @@ public class VelocityUtils {
         List<String> templates = new ArrayList<>();
         templates.add("vm/java/domain.java.vm");
         templates.add("vm/java/vo.java.vm");
+        templates.add("vm/java/export.vo.java.vm");
         templates.add("vm/java/bo.java.vm");
+        templates.add("vm/java/query.bo.java.vm");
+        templates.add("vm/java/update.bo.java.vm");
+        templates.add("vm/java/delete.bo.java.vm");
+        templates.add("vm/java/import.bo.java.vm");
         templates.add("vm/java/mapper.java.vm");
         templates.add("vm/java/service.java.vm");
         templates.add("vm/java/serviceImpl.java.vm");
@@ -157,13 +170,28 @@ public class VelocityUtils {
         String vuePath = "vue";
 
         if (template.contains("domain.java.vm")) {
-            fileName = StringUtils.format("{}/domain/{}.java", javaPath, className);
+            fileName = StringUtils.format("{}/entity/{}.java", javaPath, className);
         }
         if (template.contains("vo.java.vm")) {
             fileName = StringUtils.format("{}/domain/vo/{}Vo.java", javaPath, className);
         }
+        if (template.contains("export.vo.java.vm")) {
+            fileName = StringUtils.format("{}/domain/vo/{}ExportVo.java", javaPath, className);
+        }
         if (template.contains("bo.java.vm")) {
             fileName = StringUtils.format("{}/domain/bo/{}Bo.java", javaPath, className);
+        }
+        if (template.contains("query.bo.java.vm")) {
+            fileName = StringUtils.format("{}/domain/bo/{}QueryBo.java", javaPath, className);
+        }
+        if (template.contains("update.bo.java.vm")) {
+            fileName = StringUtils.format("{}/domain/bo/{}UpdateBo.java", javaPath, className);
+        }
+        if (template.contains("delete.bo.java.vm")) {
+            fileName = StringUtils.format("{}/domain/bo/{}DeleteBo.java", javaPath, className);
+        }
+        if (template.contains("import.bo.java.vm")) {
+            fileName = StringUtils.format("{}/domain/bo/{}ImportBo.java", javaPath, className);
         }
         if (template.contains("mapper.java.vm")) {
             fileName = StringUtils.format("{}/mapper/{}Mapper.java", javaPath, className);

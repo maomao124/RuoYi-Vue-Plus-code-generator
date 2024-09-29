@@ -1,27 +1,36 @@
 package ${packageName}.controller;
 
 import java.util.List;
+import cn.hutool.core.bean.BeanUtil;
 
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
-import org.dromara.common.log.annotation.Log;
-import org.dromara.common.web.core.BaseController;
-import org.dromara.common.mybatis.core.page.PageQuery;
-import org.dromara.common.core.domain.R;
-import org.dromara.common.core.validate.AddGroup;
-import org.dromara.common.core.validate.EditGroup;
-import org.dromara.common.log.enums.BusinessType;
-import org.dromara.common.excel.utils.ExcelUtil;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import ${basePackageName}.common.idempotent.annotation.RepeatSubmit;
+import ${basePackageName}.common.core.exception.ServiceException;
+import ${basePackageName}.common.log.annotation.Log;
+import ${basePackageName}.common.web.core.BaseController;
+import ${basePackageName}.common.mybatis.core.page.PageQuery;
+import ${basePackageName}.common.core.domain.R;
+import ${basePackageName}.common.core.validate.AddGroup;
+import ${basePackageName}.common.core.validate.EditGroup;
+import ${basePackageName}.common.log.enums.BusinessType;
+import ${basePackageName}.common.excel.utils.ExcelUtil;
+import ${packageName}.entity.${ClassName};
 import ${packageName}.domain.vo.${ClassName}Vo;
+import ${packageName}.domain.vo.${ClassName}ExportVo;
 import ${packageName}.domain.bo.${ClassName}Bo;
+import ${packageName}.domain.bo.${ClassName}DeleteBo;
 import ${packageName}.service.I${ClassName}Service;
 #if($table.crud)
-import org.dromara.common.mybatis.core.page.TableDataInfo;
+import ${basePackageName}.common.mybatis.core.page.TableDataInfo;
 #elseif($table.tree)
 #end
 
@@ -29,27 +38,44 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
  * ${functionName}
  *
  * @author ${author}
- * @date ${datetime}
+ * @since ${datetime}
  */
 @Validated
 @RequiredArgsConstructor
 @RestController
+@RefreshScope
+@Tag(name = "${functionName}")
 @RequestMapping("/${moduleName}/${businessName}")
-public class ${ClassName}Controller extends BaseController {
+public class ${ClassName}Controller extends BaseController
+{
 
     private final I${ClassName}Service ${className}Service;
 
+    #set($greeting = "${")
+    @Value("${greeting}controller.${ClassName}Controller.enable:true}")
+    private boolean enable = true;
+
+    @Value("${greeting}controller.${ClassName}Controller.updateEnable:true}")
+    private boolean updateEnable = true;
+
     /**
-     * 查询${functionName}列表
+     * 分页查询${functionName}列表
      */
     @SaCheckPermission("${permissionPrefix}:list")
-    @GetMapping("/list")
+    @PostMapping("/page")
 #if($table.crud)
-    public TableDataInfo<${ClassName}Vo> list(${ClassName}Bo bo, PageQuery pageQuery) {
+    @Operation(summary = "分页查询${functionName}列表")
+    public TableDataInfo<${ClassName}Vo> list(@Validated @RequestBody ${ClassName}Bo bo, PageQuery pageQuery) {
+    if (!enable) {
+        throw new ServiceException("${functionName}功能已关闭");
+    }
         return ${className}Service.queryPageList(bo, pageQuery);
     }
 #elseif($table.tree)
     public R<List<${ClassName}Vo>> list(${ClassName}Bo bo) {
+        if (!enable) {
+            throw new ServiceException("${functionName}功能已关闭");
+        }
         List<${ClassName}Vo> list = ${className}Service.queryList(bo);
         return R.ok(list);
     }
@@ -61,9 +87,15 @@ public class ${ClassName}Controller extends BaseController {
     @SaCheckPermission("${permissionPrefix}:export")
     @Log(title = "${functionName}", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(${ClassName}Bo bo, HttpServletResponse response) {
-        List<${ClassName}Vo> list = ${className}Service.queryList(bo);
-        ExcelUtil.exportExcel(list, "${functionName}", ${ClassName}Vo.class, response);
+    @Operation(summary = "导出${functionName}列表")
+    public void export(@Validated @RequestBody ${ClassName}Bo bo, HttpServletResponse response) {
+        if (!enable) {
+            throw new ServiceException("${functionName}功能已关闭");
+        }
+        List<${ClassName}> ${className}List = ${className}Service.queryEntityList(bo);
+        List<${ClassName}ExportVo> list = BeanUtil.copyToList(${className}List,
+            ${ClassName}ExportVo.class);
+        ExcelUtil.exportExcel(list, "${functionName}", ${ClassName}ExportVo.class, response);
     }
 
     /**
@@ -73,8 +105,12 @@ public class ${ClassName}Controller extends BaseController {
      */
     @SaCheckPermission("${permissionPrefix}:query")
     @GetMapping("/{${pkColumn.javaField}}")
+    @Operation(summary = "获取${functionName}详细信息")
     public R<${ClassName}Vo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable ${pkColumn.javaType} ${pkColumn.javaField}) {
+        if (!enable) {
+            return R.fail("${functionName}功能已关闭");
+        }
         return R.ok(${className}Service.queryById(${pkColumn.javaField}));
     }
 
@@ -85,8 +121,15 @@ public class ${ClassName}Controller extends BaseController {
     @Log(title = "${functionName}", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody ${ClassName}Bo bo) {
-        return toAjax(${className}Service.insertByBo(bo));
+    @Operation(summary = "新增${functionName}")
+    public R<Boolean> add(@Validated(AddGroup.class) @RequestBody ${ClassName}Bo bo) {
+        if (!enable) {
+            return R.fail("${functionName}功能已关闭");
+        }
+        if (!updateEnable) {
+            return R.fail("${functionName}更新功能已关闭");
+        }
+        return R.ok(${className}Service.insertByBo(bo));
     }
 
     /**
@@ -96,20 +139,74 @@ public class ${ClassName}Controller extends BaseController {
     @Log(title = "${functionName}", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody ${ClassName}Bo bo) {
-        return toAjax(${className}Service.updateByBo(bo));
+    @Operation(summary = "修改${functionName}")
+    public R<Boolean> edit(@Validated(EditGroup.class) @RequestBody ${ClassName}Bo bo) {
+        if (!enable) {
+            return R.fail("${functionName}功能已关闭");
+        }
+        if (!updateEnable) {
+            return R.fail("${functionName}更新功能已关闭");
+        }
+        return R.ok(${className}Service.updateByBo(bo));
     }
 
     /**
-     * 删除${functionName}
+     * 批量删除${functionName}-通过路径数组的方式
      *
      * @param ${pkColumn.javaField}s 主键串
      */
     @SaCheckPermission("${permissionPrefix}:remove")
     @Log(title = "${functionName}", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{${pkColumn.javaField}s}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
+    @DeleteMapping("/batch/array/{${pkColumn.javaField}s}")
+    @Operation(summary = "批量删除${functionName}-通过路径数组的方式")
+    public R<Boolean> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable ${pkColumn.javaType}[] ${pkColumn.javaField}s) {
-        return toAjax(${className}Service.deleteWithValidByIds(List.of(${pkColumn.javaField}s), true));
+        if (!enable) {
+            return R.fail("${functionName}功能已关闭");
+        }
+        if (!updateEnable) {
+            return R.fail("${functionName}更新功能已关闭");
+        }
+        return R.ok(${className}Service.deleteWithValidByIds(List.of(${pkColumn.javaField}s), true));
+    }
+
+    /**
+     * 根据ID删除${functionName}
+     *
+     * @param ${pkColumn.javaField} 主键
+     */
+    @SaCheckPermission("${permissionPrefix}:remove")
+    @Log(title = "${functionName}", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{${pkColumn.javaField}}")
+    @Operation(summary = "根据ID删除${functionName}")
+    public R<Boolean> remove(@NotNull(message = "主键不能为空")
+                                 @PathVariable ${pkColumn.javaType} ${pkColumn.javaField}) {
+        if (!enable) {
+            return R.fail("${functionName}功能已关闭");
+        }
+        if (!updateEnable) {
+            return R.fail("${functionName}更新功能已关闭");
+        }
+        return R.ok(${className}Service.deleteWithValidByIds(List.of(${pkColumn.javaField}), true));
+    }
+
+    /**
+     * 批量删除${functionName}-通过请求体的方式
+     *
+     * @param ${className}DeleteBo ${ClassName}DeleteBo
+     */
+    @SaCheckPermission("${permissionPrefix}:remove")
+    @Log(title = "${functionName}", businessType = BusinessType.DELETE)
+    @DeleteMapping("/batch")
+    @Operation(summary = "批量删除${functionName}-通过请求体的方式")
+    public R<Boolean> remove(@RequestBody @Validated(EditGroup.class)
+                                     ${ClassName}DeleteBo ${className}DeleteBo) {
+        if (!enable) {
+            return R.fail("${functionName}功能已关闭");
+        }
+        if (!updateEnable) {
+            return R.fail("${functionName}更新功能已关闭");
+        }
+        return R.ok(${className}Service.deleteWithValidByIds(${className}DeleteBo.getIds(), true));
     }
 }

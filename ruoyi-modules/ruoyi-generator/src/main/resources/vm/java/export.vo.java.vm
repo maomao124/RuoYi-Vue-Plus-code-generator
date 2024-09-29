@@ -21,16 +21,16 @@ import java.util.Date;
 
 
 /**
- * ${functionName}视图对象 ${tableName}
+ * ${functionName}导出视图对象 ${tableName}
  *
  * @author ${author}
  * @since ${datetime}
  */
 @Data
-@Schema(name = "${functionName}基本数据返回对象")
+@Schema(name = "${functionName}导出数据对象")
 @ExcelIgnoreUnannotated
 @AutoMapper(target = ${ClassName}.class)
-public class ${ClassName}Vo implements Serializable
+public class ${ClassName}ExportVo implements Serializable
 {
 
     @Serial

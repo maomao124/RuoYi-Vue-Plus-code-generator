@@ -481,6 +481,8 @@ public class GenTableServiceImpl implements IGenTableService {
 
         // 获取模板列表
         List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
+        log.info("模板："+templates);
+        //[vm/java/domain.java.vm, vm/java/vo.java.vm, vm/java/bo.java.vm, vm/java/mapper.java.vm, vm/java/service.java.vm, vm/java/serviceImpl.java.vm, vm/java/controller.java.vm, vm/xml/mapper.xml.vm, vm/sql/sql.vm, vm/ts/api.ts.vm, vm/ts/types.ts.vm, vm/vue/index.vue.vm]
         for (String template : templates) {
             // 渲染模板
             StringWriter sw = new StringWriter();

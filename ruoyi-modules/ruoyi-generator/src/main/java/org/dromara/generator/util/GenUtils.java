@@ -2,6 +2,7 @@ package org.dromara.generator.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RegExUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.generator.config.GenConfig;
@@ -16,6 +17,7 @@ import java.util.Arrays;
  *
  * @author ruoyi
  */
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GenUtils {
 
@@ -52,19 +54,87 @@ public class GenUtils {
             String htmlType = columnLength >= 500 || arraysContains(GenConstants.COLUMNTYPE_TEXT, dataType) ? GenConstants.HTML_TEXTAREA : GenConstants.HTML_INPUT;
             column.setHtmlType(htmlType);
         } else if (arraysContains(GenConstants.COLUMNTYPE_TIME, dataType)) {
-            column.setJavaType(GenConstants.TYPE_DATE);
-            column.setHtmlType(GenConstants.HTML_DATETIME);
+            if ("datetime".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_JAVA8_DATE_TIME);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("date".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_JAVA8_DATE);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else
+            {
+                column.setJavaType(GenConstants.TYPE_DATE);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
         } else if (arraysContains(GenConstants.COLUMNTYPE_NUMBER, dataType)) {
             column.setHtmlType(GenConstants.HTML_INPUT);
 
             // 如果是浮点型 统一用BigDecimal
             String[] str = StringUtils.split(StringUtils.substringBetween(column.getColumnType(), "(", ")"), StringUtils.SEPARATOR);
-            if (str != null && str.length == 2 && Integer.parseInt(str[1]) > 0) {
+            log.info("column.getColumnType():"+column.getColumnType());
+            log.info("str:"+ Arrays.toString(str));
+            /*if (str != null && str.length == 2 && Integer.parseInt(str[1]) > 0) {
                 column.setJavaType(GenConstants.TYPE_BIGDECIMAL);
             }
             // 如果是整形
             else if (str != null && str.length == 1 && Integer.parseInt(str[0]) <= 10) {
                 column.setJavaType(GenConstants.TYPE_INTEGER);
+            }*/
+            String[] COLUMNTYPE_NUMBER = {"tinyint", "smallint", "mediumint", "int", "number", "integer",
+                "bit", "bigint", "float", "double", "decimal", "numeric", "real", "double precision",
+                "smallserial", "serial", "bigserial", "money", "smallmoney"};
+            if ("int".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_INTEGER);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("bigint".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_LONG);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("tinyint".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_INTEGER);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("smallint".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_INTEGER);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("mediumint".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_INTEGER);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("decimal".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_BIGDECIMAL);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("float".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_BIGDECIMAL);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("double".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_BIGDECIMAL);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("money".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_BIGDECIMAL);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
+            }
+            else if ("smallmoney".equals(dataType))
+            {
+                column.setJavaType(GenConstants.TYPE_BIGDECIMAL);
+                column.setHtmlType(GenConstants.HTML_DATETIME);
             }
             // 长整形
             else {

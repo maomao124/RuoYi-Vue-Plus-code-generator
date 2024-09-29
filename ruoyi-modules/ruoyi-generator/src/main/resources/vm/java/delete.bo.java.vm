@@ -1,0 +1,38 @@
+package ${packageName}.domain.bo;
+
+import java.time.LocalDate;
+import java.util.List;
+import ${packageName}.entity.${ClassName};
+import io.swagger.v3.oas.annotations.media.Schema;
+import ${basePackageName}.common.mybatis.core.domain.BaseEntity;
+import ${basePackageName}.common.core.validate.AddGroup;
+import ${basePackageName}.common.core.validate.EditGroup;
+import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import jakarta.validation.constraints.*;
+#foreach ($import in $importList)
+import ${import};
+#end
+
+/**
+ * ${functionName}业务对象 ${tableName}
+ *
+ * @author ${author}
+ * @since ${datetime}
+ */
+@Data
+@Schema(name = "${functionName}删除基本参数")
+@EqualsAndHashCode(callSuper = true)
+@AutoMapper(target = ${ClassName}.class, reverseConvertGenerate = false)
+public class ${ClassName}DeleteBo extends BaseEntity
+{
+
+    /**
+    *  id列表
+    */
+    @Schema(description = "id列表")
+    @NotNull(groups = {EditGroup.class}, message = "主键列表不能为空")
+    private List<Long> ids;
+
+}

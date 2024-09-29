@@ -1,6 +1,5 @@
 package ${packageName}.domain.bo;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import ${packageName}.entity.${ClassName};
@@ -23,10 +22,10 @@ import ${import};
  * @since ${datetime}
  */
 @Data
-@Schema(name = "${functionName}基本参数")
+@Schema(name = "${functionName}查询基本参数")
 @EqualsAndHashCode(callSuper = true)
 @AutoMapper(target = ${ClassName}.class, reverseConvertGenerate = false)
-public class ${ClassName}Bo extends BaseEntity
+public class ${ClassName}QueryBo extends BaseEntity
 {
 
 #foreach ($column in $columns)

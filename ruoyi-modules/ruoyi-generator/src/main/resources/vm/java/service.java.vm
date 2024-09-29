@@ -2,9 +2,11 @@ package ${packageName}.service;
 
 import ${packageName}.domain.vo.${ClassName}Vo;
 import ${packageName}.domain.bo.${ClassName}Bo;
+import ${packageName}.domain.bo.${ClassName}QueryBo;
 #if($table.crud)
-import org.dromara.common.mybatis.core.page.TableDataInfo;
-import org.dromara.common.mybatis.core.page.PageQuery;
+import ${basePackageName}.common.mybatis.core.page.TableDataInfo;
+import ${basePackageName}.common.mybatis.core.page.PageQuery;
+import ${packageName}.entity.${ClassName};
 #end
 
 import java.util.Collection;
@@ -14,9 +16,10 @@ import java.util.List;
  * ${functionName}Service接口
  *
  * @author ${author}
- * @date ${datetime}
+ * @since ${datetime}
  */
-public interface I${ClassName}Service {
+public interface I${ClassName}Service
+{
 
     /**
      * 查询${functionName}
@@ -44,6 +47,14 @@ public interface I${ClassName}Service {
      * @return ${functionName}列表
      */
     List<${ClassName}Vo> queryList(${ClassName}Bo bo);
+
+    /**
+     * 查询符合条件的${functionName}列表-返回${ClassName}对象
+     *
+     * @param bo 查询条件
+     * @return ${functionName}列表
+     */
+    List<${ClassName}> queryEntityList(${ClassName}Bo bo);
 
     /**
      * 新增${functionName}
