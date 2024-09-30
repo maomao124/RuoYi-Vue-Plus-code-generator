@@ -43,11 +43,12 @@ public class ${ClassName}ImportBo extends BaseEntity
 #if($column.required)
 #if($column.javaType == 'String')
     @NotBlank(message = "$column.columnComment不能为空", groups = { $Group })
+    @Schema(description = "${column.columnComment}")
 #else
     @NotNull(message = "$column.columnComment不能为空", groups = { $Group })
+    @Schema(description = "${column.columnComment}")
 #end
 #end
-    @Schema(description = "${comment}")
     private $column.javaType $column.javaField;
 
 #end
