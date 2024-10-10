@@ -80,4 +80,20 @@ public interface I${ClassName}Service
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<${pkColumn.javaType}> ids, Boolean isValid);
+
+    /**
+    * 更新${functionName}-系统使用
+    *
+    * @param ${className} ${functionName}
+    * @return {@link Boolean } 更新成功为true，失败为false
+    */
+    Boolean update(${ClassName} ${className});
+
+    /**
+     * 新增${functionName}-系统使用
+     *
+     * @param ${className} ${functionName}
+     * @return {@link Boolean } 新增成功为true，失败为false
+     */
+    Boolean insert(${ClassName} ${className});
 }

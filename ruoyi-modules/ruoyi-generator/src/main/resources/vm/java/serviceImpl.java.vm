@@ -164,4 +164,29 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
         }
         return ${className}Mapper.deleteBatchIds(ids) > 0;
     }
+
+    /**
+     * 更新${functionName}-系统使用
+     *
+     * @param ${className} ${functionName}
+     * @return {@link Boolean } 更新成功为true，失败为false
+     */
+    @Override
+    public Boolean update(${ClassName} ${className}) {
+        int update = ${className}Mapper.updateById(${className});
+        return update > 0;
+    }
+
+    /**
+     * 新增${functionName}-系统使用
+     *
+     * @param ${className} ${functionName}
+     * @return {@link Boolean } 新增成功为true，失败为false
+     */
+    @Override
+    public Boolean insert(${ClassName} ${className}) {
+        ${className}.setId(null);
+        int insert = ${className}Mapper.insert(${className});
+        return insert > 0;
+    }
 }
