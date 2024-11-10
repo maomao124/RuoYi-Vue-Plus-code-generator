@@ -8,7 +8,7 @@ ruoyi:
   copyrightYear: 2024
 
 gen:
-  basePackageName: org.gxwy
+  basePackageName: org.mao
 
 captcha:
   enable: true

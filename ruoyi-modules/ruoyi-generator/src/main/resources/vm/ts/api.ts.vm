@@ -8,12 +8,17 @@ import { ${BusinessName}VO, ${BusinessName}Form, ${BusinessName}Query } from '@/
  * @returns {*}
  */
 
-export const list${BusinessName} = (query?: ${BusinessName}Query): AxiosPromise<${BusinessName}VO[]> => {
-  return request({
-    url: '/${moduleName}/${businessName}/list',
-    method: 'get',
-    params: query
-  });
+export const list${BusinessName} = (query?: ${BusinessName}Query): AxiosPromise<${BusinessName}VO[]> =>
+{
+    return request({
+        url: '/${moduleName}/${businessName}/page?' +
+            'pageNum=' + query.pageNum +
+            '&pageSize=' + query.pageSize +
+            "&orderByColumn=" + query.orderByColumn +
+            "&isAsc=" + query.isAsc,
+        method: 'POST',
+        data: query
+    });
 };
 
 /**
