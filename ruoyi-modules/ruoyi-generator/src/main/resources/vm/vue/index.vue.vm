@@ -297,6 +297,8 @@ const data = reactive<PageData<${BusinessName}Form, ${BusinessName}Query>>({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
+      orderByColumn: 'createTime',
+      isAsc: 'desc',
 #foreach ($column in $columns)
 #if($column.query)
 #if($column.htmlType != "datetime" || $column.queryType != "BETWEEN")
